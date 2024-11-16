@@ -2,9 +2,6 @@ import streamlit as st
 import infoC
 import pandas as pd
 
-# Set page configuration (optional)
-st.set_page_config(page_title="Charlie's Portfolio", page_icon=":briefcase:", layout="wide")
-
 # About Me Section
 def aboutMeSection():
     st.header("About Me 🧑‍💻")
