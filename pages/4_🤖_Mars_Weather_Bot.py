@@ -1,87 +1,95 @@
 import streamlit as st
+import requests
 import google.generativeai as genai
 import os
-import requests
+from datetime import datetime
 
-# Set API Keys
-os.environ['GOOGLE_API_KEY'] = "AIzaSyD_BgTRB-GDl_QK6-Mfb0n3JWV-R5zIlk4"
-NASA_API_KEY = "h54FtvyFY4TGpzp7tBFCD2pmmAiC1rN74joa3hgE"
+# Set your API keys securely
+NASA_API_KEY = 'YOUR_NASA_API_KEY'
+os.environ['GOOGLE_API_KEY'] = 'YOUR_GOOGLE_GEMINI_API_KEY'
 
-# Initialize Gemini Model
-model = genai.GenerativeModel("gemini-1.5-flash")
+# Configure Google Gemini API
+genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
+model = genai.GenerativeModel("gemini-1.5-flash")  # Free model of Google Gemini
 
-# Helper function to fetch APOD data from NASA API
-def fetch_apod(date=None):
-    url = f"https://api.nasa.gov/planetary/apod?api_key={NASA_API_KEY}"
-    if date:
-        url += f"&date={date}"
+# Streamlit App
+st.title("NASA Astronomy Picture of the Day")
+st.write("Select a date to view the Astronomy Picture of the Day and ask questions about it.")
+
+# User Input: Date Selection
+selected_date = st.date_input("Select a date", datetime.today())
+
+# Fetch APOD Data from NASA API
+def get_apod_data(date):
+    formatted_date = date.strftime('%Y-%m-%d')
+    url = f'https://api.nasa.gov/planetary/apod?api_key={NASA_API_KEY}&date={formatted_date}'
     try:
         response = requests.get(url)
         response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error("Error fetching APOD data: " + str(e))
-        return {}
+        data = response.json()
+        return data
+    except requests.exceptions.HTTPError as http_err:
+        st.error(f"HTTP error occurred: {http_err}")
+    except Exception as err:
+        st.error(f"An error occurred: {err}")
+    return None
 
-# Helper function to fetch EPIC data from NASA API
-def fetch_epic_images():
-    url = f"https://api.nasa.gov/EPIC/api/natural/images?api_key={NASA_API_KEY}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error("Error fetching EPIC data: " + str(e))
-        return []
+# Display APOD Image and Description
+apod_data = get_apod_data(selected_date)
+if apod_data:
+    st.header(apod_data.get('title', 'No Title'))
+    if apod_data.get('media_type') == 'image':
+        st.image(apod_data.get('url'), caption=apod_data.get('title'))
+    else:
+        st.video(apod_data.get('url'))
+    st.write(apod_data.get('explanation', 'No Explanation Available'))
 
-# Helper function to call Google Gemini for text generation
-def generate_text(prompt):
-    try:
-        response = model.generate_content(prompt)
-        return response.text
-    except Exception as e:
-        st.error("Error generating text: " + str(e))
-        return "Error generating response. Please try again."
+    # Generate Specialized Text using Google Gemini API
+    def generate_apod_summary(apod_data):
+        prompt = f"Provide an engaging summary for the following NASA Astronomy Picture of the Day titled '{apod_data.get('title')}'. Description: {apod_data.get('explanation')}"
+        try:
+            response = model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            st.error(f"An error occurred with the LLM: {e}")
+            return None
 
-# Streamlit UI
-def main():
-    st.title("NASA Data Assistant")
+    st.subheader("Generated Summary")
+    summary = generate_apod_summary(apod_data)
+    if summary:
+        st.write(summary)
 
-    # Astronomy Picture of the Day (APOD)
-    st.header("Astronomy Picture of the Day")
-    date = st.date_input("Select a date for the APOD:")
-    if st.button("Get APOD Data"):
-        apod_data = fetch_apod(date=date.isoformat())
-        if apod_data:
-            st.image(apod_data.get("url"), caption=apod_data.get("title"))
-            st.write(apod_data.get("explanation"))
-        else:
-            st.error("No data available for the selected date.")
+    # Chatbot Interface
+    st.subheader("Ask Questions about the Picture")
+    if 'chat_history' not in st.session_state:
+        st.session_state['chat_history'] = []
 
-    # EPIC (Earth Polychromatic Imaging Camera) Images
-    st.header("EPIC Images")
-    if st.button("Get Latest EPIC Images"):
-        epic_images = fetch_epic_images()
-        if epic_images:
-            for image in epic_images[:5]:  # Display up to 5 images
-                image_url = f"https://epic.gsfc.nasa.gov/archive/natural/{image['date'].replace('-', '/')}/png/{image['image']}.png"
-                st.image(image_url, caption=image.get("caption"))
-        else:
-            st.error("No EPIC images available.")
-
-    # Chatbot interaction
-    st.header("Chat with NASA Data Assistant")
-    user_question = st.text_input("Ask a question about NASA data:")
-
-    if st.button("Ask Assistant"):
+    user_question = st.text_input("Enter your question here:")
+    if st.button("Ask"):
         if user_question:
-            chatbot_prompt = (
-                f"Provide an informative response based on NASA's data: {user_question}"
+            st.session_state['chat_history'].append({"role": "user", "content": user_question})
+            # Prepare the conversation history for the model
+            conversation = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state['chat_history']])
+            prompt = (
+                f"You are an expert on astronomy and the NASA Astronomy Picture of the Day (APOD). "
+                f"The picture is titled '{apod_data.get('title')}' and was taken on {apod_data.get('date')}. "
+                f"Here is a description: {apod_data.get('explanation')}\n"
+                f"Conversation:\n{conversation}\nAssistant:"
             )
-            answer = generate_text(chatbot_prompt)
-            st.write("Assistant Response:", answer)
-        else:
-            st.error("Please enter a question.")
+            try:
+                response = model.generate_content(prompt)
+                assistant_reply = response.text.strip()
+                st.session_state['chat_history'].append({"role": "assistant", "content": assistant_reply})
+            except Exception as e:
+                st.error(f"An error occurred with the LLM: {e}")
+                assistant_reply = "I'm sorry, I couldn't process that request."
 
-if __name__ == "__main__":
-    main()
+    # Display the conversation history
+    for msg in st.session_state['chat_history']:
+        if msg['role'] == 'user':
+            st.markdown(f"**You:** {msg['content']}")
+        else:
+            st.markdown(f"**Assistant:** {msg['content']}")
+
+else:
+    st.warning("Please select a valid date for which APOD data is available.")
