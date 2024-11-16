@@ -9,8 +9,8 @@ st.subheader("Team 52, Web Development - Section C")
 st.subheader("Team Members: Charlie Rivers, Daniel Johns")
 
 # Image Display
-profile_picture = "Images/homepage.png"
-st.image(profile_picture, caption="Space Theme Image", use_column_width=True)
+profile_picture = "Images/homepage.jpg"
+st.image(profile_picture, caption="Space Theme Image", width=300)
 
 # Introduction
 st.write("""
