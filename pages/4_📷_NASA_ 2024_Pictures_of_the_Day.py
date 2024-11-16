@@ -1,5 +1,3 @@
-# mars_weather_assistant.py
-
 import streamlit as st
 import requests
 import google.generativeai as genai
@@ -12,7 +10,7 @@ os.environ['GOOGLE_API_KEY'] = st.secrets["GEMINI"]
 genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-st.title("NASA Astronomy Picture of the Day for 2024!")
+st.title("NASA Astronomy Picture of the Day")
 st.write("Select a date in 2024 to view the Astronomy Picture of the Day and ask questions about it.")
 
 selectedDate = st.date_input(
@@ -90,35 +88,39 @@ if apodData:
         st.session_state['chatHistory'] = []
 
     userQuestion = st.text_input("Enter your question here:")
-    if st.button("Ask"):
-        if userQuestion:
-            st.session_state['chatHistory'].append({"role": "user", "content": userQuestion})
+    ask_button = st.button("Ask")
+    if ask_button and userQuestion:
+        st.session_state['chatHistory'].append({"role": "user", "content": userQuestion})
 
-            messages = []
-            for msg in st.session_state['chatHistory']:
-                role = msg['role'].capitalize()
-                content = msg['content']
-                message = f"{role}: {content}"
-                messages.append(message)
-            conversation = "\n".join(messages)
+        messages = []
+        for msg in st.session_state['chatHistory']:
+            role = msg['role'].capitalize()
+            content = msg['content']
+            message = f"{role}: {content}"
+            messages.append(message)
+        conversation = "\n".join(messages)
 
-            pictureTitle = apodData.get('title')
-            pictureDate = apodData.get('date')
-            pictureDescription = apodData.get('explanation')
-            prompt = (
-                f"You are an expert on astronomy and the NASA Astronomy Picture of the Day (APOD). "
-                f"The picture is titled '{pictureTitle}' and was taken on {pictureDate}. "
-                f"Here is a description: {pictureDescription}\n"
-                f"Conversation:\n{conversation}\nAssistant:"
-            )
-            try:
-                with st.spinner('Processing your question...'):
-                    response = model.generate_content(prompt)
-                assistantReply = response.text.strip()
-                st.session_state['chatHistory'].append({"role": "assistant", "content": assistantReply})
-            except Exception as e:
-                st.error(f"An error occurred with the LLM: {e}")
-                assistantReply = "I'm sorry, I couldn't process that request."
+        pictureTitle = apodData.get('title')
+        pictureDate = apodData.get('date')
+        pictureDescription = apodData.get('explanation')
+        prompt = (
+            f"You are an expert on astronomy and the NASA Astronomy Picture of the Day (APOD). "
+            f"The picture is titled '{pictureTitle}' and was taken on {pictureDate}. "
+            f"Here is a description: {pictureDescription}\n"
+            f"Conversation:\n{conversation}\nAssistant:"
+        )
+
+        status_placeholder = st.empty()
+        status_placeholder.write("Generating, this may take a minute...")
+
+        try:
+            response = model.generate_content(prompt)
+            assistantReply = response.text.strip()
+            st.session_state['chatHistory'].append({"role": "assistant", "content": assistantReply})
+        except Exception as e:
+            st.error(f"An error occurred with the LLM: {e}")
+            assistantReply = "I'm sorry, I couldn't process that request."
+        status_placeholder.empty()
 
     for msg in st.session_state['chatHistory']:
         role = msg['role']
