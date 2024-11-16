@@ -70,10 +70,11 @@ programming_icons = {
     "CSS": "🎨",
     "AutoCAD": "📐",
 }
-spoken_icons = {"French": "🇫🇷",
-    "English": "🇺🇸",
-    "German": "🇩🇪",
-    "Afrikaans": "🇿🇦",
+
+spoken_icons = {
+    "English": "🏳",
+    "German": "🏳",
+    "Afrikaans": "🏳"
 }
 
 #CHANGE BELOW
