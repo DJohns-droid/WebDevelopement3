@@ -20,52 +20,65 @@ st.write("Select a date to view the Astronomy Picture of the Day and ask questio
 
 # User Input: Date Selection
 today = date.today()
-selected_date = st.date_input("Select a date", min_value=date(1995, 6, 16), max_value=today, value=today)
+selectedDate = st.date_input("Select a date", min_value=date(1995, 6, 16), max_value=today, value=today)
 
 # Fetch APOD Data from NASA API
-def get_apod_data(date):
-    formatted_date = date.strftime('%Y-%m-%d')
-    url = f'https://api.nasa.gov/planetary/apod?api_key={NASA_API_KEY}&date={formatted_date}'
+def getApodData(date):
+    formattedDate = date.strftime('%Y-%m-%d')
+    url = f'https://api.nasa.gov/planetary/apod?api_key={NASA_API_KEY}&date={formattedDate}'
     try:
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
         if 'error' in data:
-            st.error(data['error']['message'])
+            errorMessage = data['error']['message']
+            st.error(errorMessage)
             return None
         return data
-    except requests.exceptions.HTTPError as http_err:
-        if response.status_code == 403:
+    except requests.exceptions.HTTPError as httpErr:
+        statusCode = response.status_code
+        if statusCode == 403:
             st.error("Access to the NASA APOD API is forbidden. Please check your API key and try again.")
-        elif response.status_code == 404:
+        elif statusCode == 404:
             st.error("APOD data for the selected date is not available.")
         else:
-            st.error(f"HTTP error occurred: {http_err}")
+            st.error(f"HTTP error occurred: {httpErr}")
     except Exception as err:
         st.error(f"An error occurred: {err}")
     return None
 
 # Display APOD Image and Description
-apod_data = get_apod_data(selected_date)
-if apod_data:
-    st.header(apod_data.get('title', 'No Title'))
+apodData = getApodData(selectedDate)
+if apodData:
+    title = apodData.get('title', 'No Title')
+    explanation = apodData.get('explanation', 'No Explanation Available')
+    mediaType = apodData.get('media_type')
+    mediaUrl = apodData.get('url')
+
+    st.header(title)
 
     # Display the explanation above the image
-    st.write(apod_data.get('explanation', 'No Explanation Available'))
+    st.write(explanation)
 
-    if apod_data.get('media_type') == 'image':
-        st.image(apod_data.get('url'), caption=apod_data.get('title'))
-    elif apod_data.get('media_type') == 'video':
-        st.video(apod_data.get('url'))
+    if mediaType == 'image':
+        st.image(mediaUrl, caption=title)
+    elif mediaType == 'video':
+        st.video(mediaUrl)
     else:
         st.write("Media type not supported.")
 
     # Generate Specialized Text using Google Gemini API
-    def generate_apod_summary(apod_data):
-        prompt = f"Provide an engaging summary for the following NASA Astronomy Picture of the Day titled '{apod_data.get('title')}'. Description: {apod_data.get('explanation')}"
+    def generateApodSummary(apodData):
+        title = apodData.get('title')
+        description = apodData.get('explanation')
+        prompt = (
+            f"Provide an engaging summary for the following NASA Astronomy Picture of the Day titled '{title}'. "
+            f"Description: {description}"
+        )
         try:
             response = model.generate_content(prompt)
-            return response.text
+            summaryText = response.text
+            return summaryText
         except Exception as e:
             st.error(f"An error occurred with the LLM: {e}")
             return None
@@ -74,43 +87,59 @@ if apod_data:
 
     # Show a spinner while the summary is being generated
     with st.spinner('Generating summary...'):
-        summary = generate_apod_summary(apod_data)
+        summary = generateApodSummary(apodData)
     if summary:
         st.write(summary)
 
     # Chatbot Interface
     st.subheader("Ask Questions about the Picture")
-    if 'chat_history' not in st.session_state:
-        st.session_state['chat_history'] = []
+    if 'chatHistory' not in st.session_state:
+        st.session_state['chatHistory'] = []
 
-    user_question = st.text_input("Enter your question here:")
+    userQuestion = st.text_input("Enter your question here:")
     if st.button("Ask"):
-        if user_question:
-            st.session_state['chat_history'].append({"role": "user", "content": user_question})
+        if userQuestion:
+            # Update chat history with user's question
+            st.session_state['chatHistory'].append({"role": "user", "content": userQuestion})
+
             # Prepare the conversation history for the model
-            conversation = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state['chat_history']])
+            messages = []
+            for msg in st.session_state['chatHistory']:
+                role = msg['role'].capitalize()
+                content = msg['content']
+                message = f"{role}: {content}"
+                messages.append(message)
+            conversation = "\n".join(messages)
+
+            # Build the prompt for the LLM
+            pictureTitle = apodData.get('title')
+            pictureDate = apodData.get('date')
+            pictureDescription = apodData.get('explanation')
             prompt = (
                 f"You are an expert on astronomy and the NASA Astronomy Picture of the Day (APOD). "
-                f"The picture is titled '{apod_data.get('title')}' and was taken on {apod_data.get('date')}. "
-                f"Here is a description: {apod_data.get('explanation')}\n"
+                f"The picture is titled '{pictureTitle}' and was taken on {pictureDate}. "
+                f"Here is a description: {pictureDescription}\n"
                 f"Conversation:\n{conversation}\nAssistant:"
             )
             try:
                 # Show a spinner while the assistant is generating a response
                 with st.spinner('Processing your question...'):
                     response = model.generate_content(prompt)
-                assistant_reply = response.text.strip()
-                st.session_state['chat_history'].append({"role": "assistant", "content": assistant_reply})
+                assistantReply = response.text.strip()
+                # Update chat history with assistant's reply
+                st.session_state['chatHistory'].append({"role": "assistant", "content": assistantReply})
             except Exception as e:
                 st.error(f"An error occurred with the LLM: {e}")
-                assistant_reply = "I'm sorry, I couldn't process that request."
+                assistantReply = "I'm sorry, I couldn't process that request."
 
     # Display the conversation history
-    for msg in st.session_state['chat_history']:
-        if msg['role'] == 'user':
-            st.markdown(f"**You:** {msg['content']}")
+    for msg in st.session_state['chatHistory']:
+        role = msg['role']
+        content = msg['content']
+        if role == 'user':
+            st.markdown(f"**You:** {content}")
         else:
-            st.markdown(f"**Assistant:** {msg['content']}")
+            st.markdown(f"**Assistant:** {content}")
 
 else:
     st.warning("Please select a valid date for which APOD data is available.")
