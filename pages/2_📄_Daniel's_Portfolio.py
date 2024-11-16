@@ -57,9 +57,11 @@ experience_section(info.experience_data)
 #Projects
 def project_section(projects_data):
     st.header("Projects")
-    for project_name, project_description in projects_data.items():
-        expander = st.expander(f"{project_name}")
+    for project_name, (project_description, image) in projects_data.items():  # Unpack description and image
+        expander = st.expander(f"{project_name}")                   ##updated project section
         expander.write(project_description)
+        if image:  # Check if the image path exists
+            expander.image(image, caption=project_name, width=250)  # Render the image
     st.write("---")
 project_section(info.projects_data)
 
@@ -80,19 +82,26 @@ skills_section(info.programming_data, info.spoken_data)
 #Activities
 def activities_section(leadership_data, activity_data):
     st.header("Activities")
-    tab1,tab2 = st.tabs(["Leadership", "Community Service"])
+    tab1, tab2 = st.tabs(["Leadership", "Community Service"])
+    
+    # Leadership Tab
     with tab1:
         st.subheader("Leadership")
         for title, (details, image) in leadership_data.items():
             expander = st.expander(f"{title}")
-            expander.image(image, width = 250)
+            if image:  # Check if image exists
+                expander.image(image, width=250)
             for bullet in details:
                 expander.write(bullet)
+    
+    # Community Service Tab
     with tab2:
         st.subheader("Community Service")
-        for title, details in activity_data.items():
+        for title, (details, image) in activity_data.items():  # Unpack details and image
             expander = st.expander(f"{title}")
+            if image:  # Check if image exists                          
+                expander.image(image, width=250)
             for bullet in details:
                 expander.write(bullet)
-    st.write("---")         
+    st.write("---")     
 activities_section(info.leadership_data, info.activity_data)
