@@ -10,7 +10,7 @@ st.subheader("Team 52, Web Development - Section C")
 st.subheader("Team Members: Charlie Rivers, Daniel Johns")
 
 # Image Display
-profile_picture = "Images/homepage.jpg"
+profile_picture = "Images/homepage.png"
 image = Image.open(profile_picture)
 rotated_image = image.rotate(50, expand=True)
 st.image(rotated_image, caption="Space Theme Image", width=300, use_column_width=False)
