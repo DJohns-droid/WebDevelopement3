@@ -11,13 +11,13 @@ NASA_API_KEY = "h54FtvyFY4TGpzp7tBFCD2pmmAiC1rN74joa3hgE"
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 # Helper function to fetch Mars weather data from NASA API
-def fetch_mars_weather(date):
+def fetch_mars_weather():
     url = f"https://api.nasa.gov/insight_weather/?api_key={NASA_API_KEY}&feedtype=json&ver=1.0"
     try:
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
-        return data.get(date, {})
+        return data
     except requests.exceptions.RequestException as e:
         st.error("Error fetching Mars weather data: " + str(e))
         return {}
@@ -36,32 +36,36 @@ def main():
     st.title("Mars Weather Assistant Page")
 
     # User Inputs
-    st.write("Mars uses a different time system based on sols, which are roughly 24 hours and 39 minutes long. Let's help you find the weather data!")
-    date = st.text_input("Enter a Sol date (Martian day since mission start, e.g., 1000 for the 1000th Martian day):")
-    activity_type = st.selectbox(
-        "Select an activity type:",
-        ["Rover Operations", "Outdoor Exploration", "Mission Planning"]
-    )
+    st.write("Mars uses a time system based on sols, which are roughly 24 hours and 39 minutes long. Below is a list of available dates for Mars weather.")
+    mars_weather_data = fetch_mars_weather()
+    if mars_weather_data:
+        available_sols = list(mars_weather_data.get("sol_keys", []))
+        if available_sols:
+            selected_sol = st.selectbox("Select a Sol date (Martian day):", available_sols)
+            activity_type = st.selectbox(
+                "Select an activity type:",
+                ["Rover Operations", "Outdoor Exploration", "Mission Planning"]
+            )
 
-    specific_concern = st.text_area("Describe specific weather concerns or questions:")
+            specific_concern = st.text_area("Describe specific weather concerns or questions:")
 
-    # Fetch Mars weather data
-    if st.button("Get Mars Weather Data"):
-        if date.isdigit():
-            weather_data = fetch_mars_weather(date)
-            if weather_data:
-                st.write("Mars Weather Data:", weather_data)
-                # Generate daily weather report
-                prompt = (
-                    f"Generate a {activity_type.lower()} weather report for Mars on Sol {date}. "
-                    f"Include details on weather conditions and recommendations for activities."
-                )
-                report = generate_text(prompt)
-                st.write("Generated Weather Report:", report)
-            else:
-                st.error("No data found for the given Sol date. Please try another date.")
+            if st.button("Get Mars Weather Data"):
+                weather_data = mars_weather_data.get(selected_sol, {})
+                if weather_data:
+                    st.write(f"Mars Weather Data for Sol {selected_sol}:", weather_data)
+                    # Generate daily weather report
+                    prompt = (
+                        f"Generate a {activity_type.lower()} weather report for Mars on Sol {selected_sol}. "
+                        f"Include details on weather conditions and recommendations for activities."
+                    )
+                    report = generate_text(prompt)
+                    st.write("Generated Weather Report:", report)
+                else:
+                    st.error("Weather data is not available for the selected Sol date.")
         else:
-            st.error("Please enter a valid numeric Sol date.")
+            st.error("No available Sol dates found in the data.")
+    else:
+        st.error("Unable to fetch Mars weather data. Please try again later.")
 
     # Chatbot interaction
     st.write("### Chat with the Mars Weather Assistant")
