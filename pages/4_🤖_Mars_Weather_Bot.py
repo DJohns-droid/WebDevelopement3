@@ -7,8 +7,8 @@ import os
 from datetime import datetime, date
 
 # Set your API keys securely
-NASA_API_KEY = 'h54FtvyFY4TGpzp7tBFCD2pmmAiC1rN74joa3hgE'  # Replace with your actual API key
-os.environ['GOOGLE_API_KEY'] = 'AIzaSyD_BgTRB-GDl_QK6-Mfb0n3JWV-R5zIlk4'  # Replace with your actual API key
+NASA_API_KEY = 'h54FtvyFY4TGpzp7tBFCD2pmmAiC1rN74joa3hgE'  # Replace with your actual NASA API key
+os.environ['GOOGLE_API_KEY'] = 'AIzaSyD_BgTRB-GDl_QK6-Mfb0n3JWV-R5zIlk4'  # Replace with your actual Google Gemini API key
 
 # Configure Google Gemini API
 genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
@@ -49,13 +49,16 @@ def get_apod_data(date):
 apod_data = get_apod_data(selected_date)
 if apod_data:
     st.header(apod_data.get('title', 'No Title'))
+
+    # Display the explanation above the image
+    st.write(apod_data.get('explanation', 'No Explanation Available'))
+
     if apod_data.get('media_type') == 'image':
         st.image(apod_data.get('url'), caption=apod_data.get('title'))
     elif apod_data.get('media_type') == 'video':
         st.video(apod_data.get('url'))
     else:
         st.write("Media type not supported.")
-    st.write(apod_data.get('explanation', 'No Explanation Available'))
 
     # Generate Specialized Text using Google Gemini API
     def generate_apod_summary(apod_data):
@@ -68,7 +71,10 @@ if apod_data:
             return None
 
     st.subheader("Generated Summary")
-    summary = generate_apod_summary(apod_data)
+
+    # Show a spinner while the summary is being generated
+    with st.spinner('Generating summary...'):
+        summary = generate_apod_summary(apod_data)
     if summary:
         st.write(summary)
 
@@ -90,7 +96,9 @@ if apod_data:
                 f"Conversation:\n{conversation}\nAssistant:"
             )
             try:
-                response = model.generate_content(prompt)
+                # Show a spinner while the assistant is generating a response
+                with st.spinner('Processing your question...'):
+                    response = model.generate_content(prompt)
                 assistant_reply = response.text.strip()
                 st.session_state['chat_history'].append({"role": "assistant", "content": assistant_reply})
             except Exception as e:
