@@ -51,7 +51,7 @@ projects_data = {
     "Gemini Project - Valve Automation": (
         "Contributed to automating valve testing by researching strain gauge applications, "
         "aiming to improve efficiency and reduce manual testing requirements.",
-        "Images/project.JFIF"
+        "Images/project1.jpg"
     ),
 }
 programming_data = {
