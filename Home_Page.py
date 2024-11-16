@@ -20,7 +20,7 @@ def apply_shake(image, intensity=5):
         image.size, Image.AFFINE, (1, 0, offset_x, 0, 1, offset_y)
     )
 
-profile_picture = "Images/homepage.jpg"
+profile_picture = "Images/homepage.png"
 image = Image.open(profile_picture).rotate(50, expand=True).resize((200, 200))
 
 # Continuously display the shaking image
