@@ -4,8 +4,6 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime, timedelta
 
-st.set_page_config(page_title="Mars Weather Dashboard", layout="wide")
-
 nasaApiKey = st.secrets["NASA"]
 
 apiBaseUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers/perseverance/photos"
