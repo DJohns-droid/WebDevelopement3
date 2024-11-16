@@ -12,7 +12,7 @@ os.environ['GOOGLE_API_KEY'] = st.secrets["GEMINI"]
 genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-st.title("NASA Astronomy Picture of the Day")
+st.title("NASA Astronomy Picture of the Day for 2024!")
 st.write("Select a date in 2024 to view the Astronomy Picture of the Day and ask questions about it.")
 
 selectedDate = st.date_input(
