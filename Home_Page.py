@@ -13,7 +13,7 @@ image = Image.open(profile_picture)
 rotated_image = image.rotate(50, expand=True)
 width, height = rotated_image.size
 resized_image = rotated_image.resize((width // 3, height // 3))
-st.image(resized_image, caption="Space Theme Image", use_column_width=False)
+st.image(resized_image, use_column_width=False)
 
 # Introduction
 st.write("""
