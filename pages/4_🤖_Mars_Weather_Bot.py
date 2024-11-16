@@ -1,64 +1,64 @@
-import os
 import requests
 import streamlit as st
 import google.generativeai as genai
 
-NASA_API_KEY = st.secrets["NASA"]
+# Access your Google Gemini API key from Streamlit secrets
 GEMINI_API_KEY = st.secrets["GEMINI"]
 
+# Configure the Google Gemini API client
 genai.configure(api_key=GEMINI_API_KEY)
 
+# Function to fetch Mars weather data from MAAS2 API
 def fetch_mars_weather():
     try:
-        url = f"https://api.nasa.gov/insight_weather/?api_key={NASA_API_KEY}&feedtype=json&ver=1.0"
+        url = "https://api.maas2.apollorion.com/"
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
         return data
     except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching data from NASA API: {e}")
+        st.error(f"Error fetching data from MAAS2 API: {e}")
         return None
 
 def main():
     st.title("🚀 Mars Weather Assistant")
     st.write("Get customized Mars weather reports and interact with the Mars Weather Assistant.")
 
+    # Fetch Mars weather data and store it in session state
     if 'mars_data' not in st.session_state:
         st.session_state.mars_data = fetch_mars_weather()
 
     mars_data = st.session_state.mars_data
 
     if mars_data:
-        sol_keys = mars_data.get('sol_keys', [])
+        # Provide a brief explanation about Sol and Earth dates
+        st.write("""
+            **Sol**: A Martian day, approximately 24 hours and 39 minutes.
+            
+            **Latest Mars Weather Data:**
+        """)
+        st.write(f"**Sol {mars_data['sol']}, Earth Date: {mars_data['terrestrial_date']}**")
 
-        if not sol_keys:
-            st.error("No Sol data available.")
-            return
+        # Display weather information
+        st.write(f"**Season:** {mars_data['season'].capitalize()}")
+        st.write(f"**Min Temperature:** {mars_data['min_temp']} °C")
+        st.write(f"**Max Temperature:** {mars_data['max_temp']} °C")
+        st.write(f"**Pressure:** {mars_data['pressure']} Pa")
+        st.write(f"**Atmosphere Opacity:** {mars_data['atmo_opacity'].capitalize()}")
+        st.write(f"**Sunrise:** {mars_data['sunrise']}")
+        st.write(f"**Sunset:** {mars_data['sunset']}")
 
-        st.write("Select a Martian day (Sol) for weather analysis. A 'Sol' is a Martian day, which is approximately 24 hours and 39 minutes longer than an Earth day.")
-
-        sol_options = []
-        for sol in sol_keys:
-            first_UTC = mars_data[sol].get('First_UTC', '')
-            if first_UTC:
-                earth_date = first_UTC.split('T')[0]
-                sol_option = f"Sol {sol} (Earth date: {earth_date})"
-            else:
-                sol_option = f"Sol {sol}"
-            sol_options.append((sol, sol_option))
-
-        selected_sol_option = st.selectbox("Select a Martian day (Sol):", [option[1] for option in sol_options])
-        selected_sol = next(sol for sol, option in sol_options if option == selected_sol_option)
-
+        # User inputs
         activity = st.text_input("Enter the type of activity (e.g., 'Mars rover operations'):")
         style = st.selectbox("Select report style:", ["scientific", "casual", "mission-focused"])
 
         if st.button("Generate Report"):
-            if selected_sol and activity and style:
-                weather_data = mars_data[selected_sol]
-                st.session_state.weather_data = weather_data
-                weather_data['activity'] = activity
-                generate_weather_report(weather_data, style)
+            if activity and style:
+                st.session_state.weather_data = mars_data
+                # Add activity context to weather data
+                mars_data['activity'] = activity
+                # Generate weather report
+                generate_weather_report(mars_data, style)
             else:
                 st.error("Please fill in all the fields.")
 
@@ -72,16 +72,18 @@ def main():
     else:
         st.error("Unable to fetch Mars weather data at this time.")
 
+# Function to generate a weather report using Google Gemini LLM
 def generate_weather_report(weather_data, style):
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
-        prompt = f"Generate a {style} weather report for a Mars mission involving {weather_data['activity']} on Sol {weather_data.get('sol', 'N/A')} with the following data: {weather_data}"
+        prompt = f"Generate a {style} weather report for a Mars mission involving {weather_data['activity']} on Sol {weather_data['sol']} with the following data:\n\n{weather_data}"
         response = model.generate_content(prompt)
         st.subheader("Generated Weather Report:")
         st.write(response.text)
     except Exception as e:
         st.error(f"Error generating content with Google Gemini: {e}")
 
+# Function to handle chatbot interaction
 def mars_weather_chatbot(weather_data):
     try:
         if 'chat_history' not in st.session_state:
@@ -89,11 +91,13 @@ def mars_weather_chatbot(weather_data):
         user_input = st.text_input("You:", key="chat_input")
         if user_input:
             model = genai.GenerativeModel("gemini-1.5-chat")
-            prompt = f"Using the following Mars weather data: {weather_data}, answer the question: {user_input}"
+            prompt = f"Using the following Mars weather data:\n\n{weather_data}\n\nAnswer the following question:\n{user_input}"
             response = model.generate_content(prompt)
             st.session_state.chat_history.append(("You", user_input))
             st.session_state.chat_history.append(("Mars Assistant", response.text))
+            # Clear the input after submission
             st.experimental_rerun()
+        # Display chat history
         for speaker, text in st.session_state.chat_history:
             st.write(f"**{speaker}:** {text}")
     except Exception as e:
