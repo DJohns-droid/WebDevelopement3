@@ -19,17 +19,17 @@ def linksSection():
     st.sidebar.header("Links 🔗")
     
     # LinkedIn
-    st.sidebar.subheader("Connect with me on LinkedIn")
+    st.sidebar.text("Connect with me on LinkedIn")
     linkedin_link = f'<a href="{infoC.my_linkedin_url}" target="_blank"><img src="{infoC.linkedin_image_url}" alt="LinkedIn" width="75" height="75"></a>'
     st.sidebar.markdown(linkedin_link, unsafe_allow_html=True)
     
     # GitHub
-    st.sidebar.subheader("Checkout my GitHub")
+    st.sidebar.text("Checkout my GitHub")
     github_link = f'<a href="{infoC.my_github_url}" target="_blank"><img src="{infoC.github_image_url}" alt="GitHub" width="65" height="65"></a>'
     st.sidebar.markdown(github_link, unsafe_allow_html=True)
     
     # Email
-    st.sidebar.subheader("Or Email me!")
+    st.sidebar.text("Or Email me!")
     email_html = f'<a href="mailto:{infoC.my_email_address}"><img src="{infoC.email_image_url}" alt="Email" width="75" height="75"></a>'
     st.sidebar.markdown(email_html, unsafe_allow_html=True)
 
