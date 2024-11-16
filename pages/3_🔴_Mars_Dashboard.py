@@ -4,16 +4,13 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime, timedelta
 
-# Configure page
 st.set_page_config(page_title="Mars Weather Dashboard", layout="wide")
 
-# Get API key from secrets
 NASA_API_KEY = st.secrets["NASA"]
 
-# NASA API configuration
 BASE_URL = "https://api.nasa.gov/mars-photos/api/v1/rovers/perseverance/photos"
 
-@st.cache_data(ttl=3600)  # Cache data for 1 hour
+@st.cache_data(ttl=3600)
 def fetch_mars_photos(date_str, camera=None):
     """Fetch Mars photos from Perseverance rover for a specific date"""
     params = {
@@ -31,18 +28,15 @@ def fetch_mars_photos(date_str, camera=None):
         st.error(f"Error fetching data: {e}")
         return None
 
-# Title and description
 st.title("Mars Imagery Dashboard 🔴")
 st.markdown("""
 Explore the latest images from NASA's Perseverance rover on Mars! 
 Select a date and camera type to view photos and statistics.
 """)
 
-# Sidebar controls
 with st.sidebar:
     st.header("Dashboard Controls")
     
-    # Date selector with a more reasonable default date
     default_date = datetime.now() - timedelta(days=7)
     selected_date = st.date_input(
         "Select Date",
@@ -51,7 +45,6 @@ with st.sidebar:
         help="Choose a date to view Mars photos"
     )
     
-    # Camera selector
     camera_options = [
         "All Cameras",
         "NAVCAM_LEFT",
@@ -67,7 +60,6 @@ with st.sidebar:
         help="Choose which camera's photos to display"
     )
     
-    # Display options
     max_images = st.slider(
         "Maximum Images",
         min_value=1,
@@ -76,14 +68,12 @@ with st.sidebar:
         help="Adjust how many images to display"
     )
 
-# Main content
 date_str = selected_date.strftime('%Y-%m-%d')
 photos_data = fetch_mars_photos(date_str, selected_camera)
 
 if photos_data and 'photos' in photos_data and photos_data['photos']:
     photos = photos_data['photos'][:max_images]
     
-    # Display photos in a grid
     cols = st.columns(2)
     for idx, photo in enumerate(photos):
         with cols[idx % 2]:
@@ -94,22 +84,18 @@ if photos_data and 'photos' in photos_data and photos_data['photos']:
             )
             st.markdown(f"**Earth Date:** {photo['earth_date']}")
             
-    # Statistics section
     st.subheader("📊 Image Statistics")
     
-    # Calculate statistics
     total_photos = len(photos_data['photos'])
     unique_cameras = set(photo['camera']['name'] for photo in photos_data['photos'])
     cameras_used = len(unique_cameras)
     
-    # Display metrics
     col1, col2 = st.columns(2)
     with col1:
         st.metric("Total Photos Available", total_photos)
     with col2:
         st.metric("Different Cameras Used", cameras_used)
         
-    # Create camera distribution visualization
     camera_df = pd.DataFrame([
         {'camera': photo['camera']['name']} 
         for photo in photos_data['photos']
