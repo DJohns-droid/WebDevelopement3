@@ -8,7 +8,7 @@ st.title("Web Development Lab03")
 st.markdown("**CS 1301** | **Team 52, Web Development - Section C** | **Team Members: Charlie Rivers, Daniel Johns**")
 
 # Image Display
-profile_picture = "Images/homepage.jpg"
+profile_picture = "Images/homepage.png"
 image = Image.open(profile_picture)
 rotated_image = image.rotate(50, expand=True)
 width, height = rotated_image.size
