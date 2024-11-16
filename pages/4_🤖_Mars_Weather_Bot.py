@@ -3,8 +3,8 @@ import requests
 import streamlit as st
 import google.generativeai as genai
 
-NASA_API_KEY = st.secrets["NASA_API_KEY"]
-GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+NASA_API_KEY = st.secrets["NASA"]
+GEMINI_API_KEY = st.secrets["GEMINI"]
 
 genai.configure(api_key=GEMINI_API_KEY)
 
