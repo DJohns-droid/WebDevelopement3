@@ -32,7 +32,7 @@ def fetch_mars_photos(date_str, camera=None):
         return None
 
 # Title and description
-st.title("Mars Weather & Imagery Dashboard 🔴")
+st.title("Mars Imagery Dashboard 🔴")
 st.markdown("""
 Explore the latest images from NASA's Perseverance rover on Mars! 
 Select a date and camera type to view photos and statistics.
