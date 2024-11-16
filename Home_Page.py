@@ -1,27 +1,22 @@
 import streamlit as st
 from PIL import Image
 
-# Page Configuration
+# Adjust page configuration to fit content better
 st.set_page_config(layout="wide")
 
 # Title of App
 st.title("Web Development Lab03")
 
 # Assignment Data
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.header("CS 1301")
-    st.subheader("Team 52, Web Development - Section C")
-    st.subheader("Team Members: Charlie Rivers, Daniel Johns")
+st.markdown("**CS 1301** | **Team 52, Web Development - Section C** | **Team Members: Charlie Rivers, Daniel Johns**")
 
 # Image Display
-with col2:
-    profile_picture = "Images/homepage.png"
-    image = Image.open(profile_picture)
-    rotated_image = image.rotate(50, expand=True)
-    width, height = rotated_image.size
-    resized_image = rotated_image.resize((width // 3, height // 3))
-    st.image(resized_image, caption="Space Theme Image", use_column_width=False)
+profile_picture = "Images/homepage.png"
+image = Image.open(profile_picture)
+rotated_image = image.rotate(50, expand=True)
+width, height = rotated_image.size
+resized_image = rotated_image.resize((width // 3, height // 3))
+st.image(resized_image, caption="Space Theme Image", use_column_width=False)
 
 # Introduction
 st.write("""
