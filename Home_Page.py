@@ -1,7 +1,6 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
-import time
 
 # Adjust page configuration to fit content better
 st.set_page_config(layout="wide")
@@ -20,14 +19,15 @@ def apply_shake(image, intensity=5):
         image.size, Image.AFFINE, (1, 0, offset_x, 0, 1, offset_y)
     )
 
-profile_picture = "Images/homepage.png"
+profile_picture = "Images/homepage.jpg"
 image = Image.open(profile_picture).rotate(50, expand=True).resize((200, 200))
 
-# Continuously display the shaking image
-while True:
-    shaken_image = apply_shake(image)
-    st.image(shaken_image, caption="Space Theme Image", use_column_width=False)
-    time.sleep(0.05)
+# Generate a shaken image on each refresh
+shaken_image = apply_shake(image)
+st.image(shaken_image, caption="Space Theme Image", use_column_width=False)
+
+# Auto-refresh the page for continuous shake effect
+st.experimental_rerun()
 
 # Introduction
 st.write("""
