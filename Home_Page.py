@@ -1,9 +1,6 @@
 import streamlit as st
 from PIL import Image
 
-# Adjust page configuration to fit content better
-st.set_page_config(layout="wide")
-
 # Title of App
 st.title("Web Development Lab03")
 
