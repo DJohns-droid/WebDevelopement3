@@ -4,7 +4,7 @@ import pandas as pd
 
 ##abt me
 def about_me_section():
-    st.header("About Me")
+    st.header("About Me 🧑‍💻")
     st.image(info.profile_picture, width = 200)
     st.write(info.about_me)
     st.write("---")
@@ -12,7 +12,7 @@ about_me_section()
 
 #Sidebar links
 def links_section():
-    st.sidebar.header("Links")
+    st.sidebar.header("Links 🔗")
     st.sidebar.text("Connect with me on LinkedIn")
     linkedin_link = f'<a href="{info.my_linkedin_url}"><img src="{info.linkedin_image_url}" alt="linkedin_link" width="75" height="75"></a>'
     st.sidebar.markdown(linkedin_link, unsafe_allow_html=True)
@@ -26,12 +26,12 @@ links_section()
 
 #Education
 def education_section(education_data, course_data):
-    st.header("Education")
+    st.header("Education 🎓")
     st.markdown(f"### **{education_data['Institution']}**")
     st.markdown(f"**Degree:** {education_data['Degree']}")
     st.markdown(f"**Graduation Date:** {education_data['Graduation Date']}")
     st.markdown(f"**GPA:** {education_data['GPA']}")
-    st.markdown("**Relevatn Coursework:**")
+    st.markdown("**Relevant Coursework:**")
     coursework = pd.DataFrame(course_data)
     st.dataframe(coursework, column_config={
         "code":"Course Code",
@@ -45,7 +45,7 @@ education_section(info.education_data, info.course_data)
 
 #Professional Experience
 def experience_section(experience_data):
-    st.header("Professional Experience")
+    st.header("Professional Experience 💼")
     for job_title, (job_description, image) in experience_data.items():
         expander = st.expander(f"{job_title}")
         expander.image(image, width = 250)
@@ -56,7 +56,7 @@ experience_section(info.experience_data)
 
 #Projects
 def project_section(projects_data):
-    st.header("Projects")
+    st.header("Projects 🛠")
     for project_name, (project_description, image) in projects_data.items():  # Unpack description and image
         expander = st.expander(f"{project_name}")                   ##updated project section
         expander.write(project_description)
@@ -67,7 +67,7 @@ project_section(info.projects_data)
 
 #Skills
 def skills_section(programming_data, spoken_data):
-    st.header("Skills")
+    st.header("Skills 🧑‍💻")
     st.subheader("Programming Languages")
     for skill,percentage in programming_data.items():
         st.write(f"{skill}{info.programming_icons.get(skill, '')}")
@@ -81,7 +81,7 @@ skills_section(info.programming_data, info.spoken_data)
 
 #Activities
 def activities_section(leadership_data, activity_data):
-    st.header("Activities")
+    st.header("Activities 🌟")
     tab1, tab2 = st.tabs(["Leadership", "Community Service"])
     
     # Leadership Tab
