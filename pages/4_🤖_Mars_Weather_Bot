@@ -6,10 +6,8 @@ import google.generativeai as genai
 NASA_API_KEY = st.secrets["NASA_API_KEY"]
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
-# Configure the Google Gemini API client
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Function to fetch Mars weather data from NASA API
 def fetch_mars_weather():
     try:
         url = f"https://api.nasa.gov/insight_weather/?api_key={NASA_API_KEY}&feedtype=json&ver=1.0"
@@ -28,7 +26,6 @@ def get_weather_data_for_sol(sol_date, data):
         st.error("Invalid Sol date selected or data unavailable.")
         return None
 
-# Function to generate a weather report using Google Gemini LLM
 def generate_weather_report(weather_data, style):
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
@@ -39,7 +36,6 @@ def generate_weather_report(weather_data, style):
     except Exception as e:
         st.error(f"Error generating content with Google Gemini: {e}")
 
-# Function to handle chatbot interaction
 def mars_weather_chatbot(weather_data):
     try:
         if 'chat_history' not in st.session_state:
@@ -51,9 +47,7 @@ def mars_weather_chatbot(weather_data):
             response = model.generate_content(prompt)
             st.session_state.chat_history.append(("You", user_input))
             st.session_state.chat_history.append(("Mars Assistant", response.text))
-            # Clear the input after submission
             st.experimental_rerun()
-        # Display chat history
         for speaker, text in st.session_state.chat_history:
             st.write(f"**{speaker}:** {text}")
     except Exception as e:
@@ -63,11 +57,9 @@ def main():
     st.title("🚀 Mars Weather Assistant")
     st.write("Get customized Mars weather reports and interact with the Mars Weather Assistant.")
 
-    # Fetch Mars weather data once and store it in session state
     if 'mars_data' not in st.session_state:
         st.session_state.mars_data = fetch_mars_weather()
 
-    # User inputs
     sol_date = st.text_input("Enter the Sol date for weather analysis (e.g., '1000'):")
     activity = st.text_input("Enter the type of activity (e.g., 'Mars rover operations'):")
     style = st.selectbox("Select report style:", ["scientific", "casual", "mission-focused"])
@@ -79,9 +71,7 @@ def main():
                 weather_data = get_weather_data_for_sol(sol_date, mars_data)
                 if weather_data:
                     st.session_state.weather_data = weather_data
-                    # Add activity context to weather data
                     weather_data['activity'] = activity
-                    # Generate weather report
                     generate_weather_report(weather_data, style)
         else:
             st.error("Please fill in all the fields.")
