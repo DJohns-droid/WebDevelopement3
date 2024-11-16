@@ -1,12 +1,14 @@
+# mars_weather_assistant.py
+
 import streamlit as st
 import requests
 import google.generativeai as genai
 import os
-from datetime import datetime
+from datetime import datetime, date
 
 # Set your API keys securely
-NASA_API_KEY = 'YOUR_NASA_API_KEY'
-os.environ['GOOGLE_API_KEY'] = 'YOUR_GOOGLE_GEMINI_API_KEY'
+NASA_API_KEY = 'h54FtvyFY4TGpzp7tBFCD2pmmAiC1rN74joa3hgE'  # Replace with your actual API key
+os.environ['GOOGLE_API_KEY'] = 'AIzaSyD_BgTRB-GDl_QK6-Mfb0n3JWV-R5zIlk4'  # Replace with your actual API key
 
 # Configure Google Gemini API
 genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
@@ -17,7 +19,8 @@ st.title("NASA Astronomy Picture of the Day")
 st.write("Select a date to view the Astronomy Picture of the Day and ask questions about it.")
 
 # User Input: Date Selection
-selected_date = st.date_input("Select a date", datetime.today())
+today = date.today()
+selected_date = st.date_input("Select a date", min_value=date(1995, 6, 16), max_value=today, value=today)
 
 # Fetch APOD Data from NASA API
 def get_apod_data(date):
@@ -27,9 +30,17 @@ def get_apod_data(date):
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
+        if 'error' in data:
+            st.error(data['error']['message'])
+            return None
         return data
     except requests.exceptions.HTTPError as http_err:
-        st.error(f"HTTP error occurred: {http_err}")
+        if response.status_code == 403:
+            st.error("Access to the NASA APOD API is forbidden. Please check your API key and try again.")
+        elif response.status_code == 404:
+            st.error("APOD data for the selected date is not available.")
+        else:
+            st.error(f"HTTP error occurred: {http_err}")
     except Exception as err:
         st.error(f"An error occurred: {err}")
     return None
@@ -40,8 +51,10 @@ if apod_data:
     st.header(apod_data.get('title', 'No Title'))
     if apod_data.get('media_type') == 'image':
         st.image(apod_data.get('url'), caption=apod_data.get('title'))
-    else:
+    elif apod_data.get('media_type') == 'video':
         st.video(apod_data.get('url'))
+    else:
+        st.write("Media type not supported.")
     st.write(apod_data.get('explanation', 'No Explanation Available'))
 
     # Generate Specialized Text using Google Gemini API
