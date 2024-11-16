@@ -1,11 +1,8 @@
-# This file contains the information to be displayed in Charlie's portfolio
-
 # Profile Information
 profile_picture = "ImagesC/profile.jpeg"
 about_me = (
-    "I'm Charlie Rivers, a dedicated and driven individual from Atlanta, GA. "
-    "I am passionate about community involvement, leadership, and achieving "
-    "excellence in academics and extracurricular activities."
+    "I'm Charlie Rivers, from Atlanta, GA. I'm passionate about community work, taking on leadership roles, "
+    "and balancing academics with extracurriculars. I like staying busy and contributing wherever I can."
 )
 
 # Links (Optional: You can customize the image URLs or use local images)
@@ -20,8 +17,8 @@ my_email_address = "Charlieriv@icloud.com"
 
 # Education Data
 education_data = {
-    'Degree': 'Industrial Engineering Bachelor Degree',
-    'Institution': 'Georgia Institute of Technology',
+    'Degree': 'Bachelor’s in Industrial Engineering',
+    'Institution': 'Georgia Tech',
     'Graduation Date': '2028',
     'GPA': '3.6 unweighted',
 }
@@ -36,40 +33,42 @@ course_data = {
     ],
     "semester_taken": ["Freshman", "Freshman", "Freshman", "Freshman"],
     "skills": [
-        "Learned foundational programming concepts and applications",
-        "Mastered key mathematical theories and problem-solving strategies",
-        "Developed understanding of matrix operations and vector spaces",
-        "Explored psychological principles and their applications"
+        "Learned the basics of programming and how to apply them.",
+        "Worked through calculus concepts and sharpened problem-solving skills.",
+        "Built a solid understanding of matrix operations and vector spaces.",
+        "Studied key psychological principles and how they relate to everyday life."
     ],
 }
 
 # Professional Experience Data
 experience_data = {
     "Tour Guide, Metro Atlanta Project": ([
-        "- Led a team of approximately 10 volunteers",
-        "- Completed construction projects benefiting underserved families and organizations",
-        "- Managed project logistics, including material procurement and worksite operations"
+        "- Led a group of 10 volunteers on construction projects.",
+        "- Helped underserved families and organizations through the work.",
+        "- Organized materials and kept things running smoothly on-site."
     ], "ImagesC/tour_guide.jpeg"),
     "Head Counselor, Camp Evergreen": ([
-        "- Promoted to Head Counselor role typically held by college staff",
-        "- Managed a team of junior counselors to ensure smooth operations",
-        "- Organized activities fostering a fun and educational environment"
+        "- Promoted to Head Counselor, a role usually held by college students.",
+        "- Managed junior counselors and coordinated daily camp activities.",
+        "- Planned and led activities to keep things fun and engaging."
     ], "ImagesC/camp.jpeg"),
     "Customer Service Representative, Chick-fil-A": ([
-        "- Employee of the Month, February 2023",
-        "- Provided exceptional service while handling orders and assisting customers",
-        "- Maintained cleanliness of equipment and dining areas"
+        "- Recognized as Employee of the Month in February 2023.",
+        "- Helped customers with orders and kept the dining area clean.",
+        "- Worked to make sure everyone had a good experience."
     ], "ImagesC/chickfila.jpeg"),
     "Founder, Charlie's Chores": ([
-        "- Maintained over 20 clients, including 10 recurring weekly",
-        "- Expanded service offerings to include pet care, yard maintenance, and recycling services"
+        "- Built a client base of over 20 people, including 10 regulars.",
+        "- Offered services like pet care, yard work, and recycling pickup.",
+        "- Focused on providing reliable service to keep clients coming back."
     ], "ImagesC/chores.jpeg"),
 }
 
 # Projects Data
 projects_data = {
     "Event Coordination": (
-        "Organized and led multiple community outreach programs and events, such as Groceries on Wheels and student piano recitals.",
+        "Planned and ran events like Groceries on Wheels and piano recitals, "
+        "bringing people together and making things happen.",
         "ImagesC/event_coordination.jpeg"
     )
 }
@@ -102,23 +101,23 @@ spoken_data = {
 # Activities Data
 leadership_data = {
     "Co-Captain, Georgia Student Ice Hockey League": ([
-        "- Led team to 2022 State Runner-Up position",
-        "- Organized training schedules and team strategies"
+        "- Helped lead the team to a 2022 State Runner-Up finish.",
+        "- Managed training schedules and worked on team strategies."
     ], "ImagesC/hockey.jpeg"),
 }
 
 activity_data = {
     "Piano and Music Engagement": (
         [
-            "- Taught beginner students piano techniques",
-            "- Performed in various community recitals"
+            "- Taught beginner piano lessons to kids.",
+            "- Performed at community recitals."
         ],
         "ImagesC/piano.jpeg"
     ),
     "Community Involvement": (
         [
-            "- Organized charity events and fundraising activities",
-            "- Actively participated in Groceries on Wheels initiatives"
+            "- Organized charity events and fundraisers.",
+            "- Delivered groceries to people in need through Groceries on Wheels."
         ],
         "ImagesC/community_involvement.jpeg"
     )
