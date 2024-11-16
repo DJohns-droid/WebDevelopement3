@@ -1,12 +1,12 @@
 import streamlit as st
-import info
+import infoC
 import pandas as pd
 
 # About Me
 def aboutMeSection():
     st.header("About Me 🧑‍💻")
-    st.image(info.profile_picture, width=200)
-    st.write(info.about_me)
+    st.image(infoC.profile_picture, width=200)
+    st.write(infoC.about_me)
     st.write("")
 aboutMeSection()
 
@@ -14,13 +14,13 @@ aboutMeSection()
 def linksSection():
     st.sidebar.header("Links 🔗")
     st.sidebar.text("Connect with me on LinkedIn")
-    linkedin_link = f'<a href="{info.my_linkedin_url}"><img src="{info.linkedin_image_url}" alt="LinkedIn" width="75" height="75"></a>'
+    linkedin_link = f'<a href="{infoC.my_linkedin_url}"><img src="{infoC.linkedin_image_url}" alt="LinkedIn" width="75" height="75"></a>'
     st.sidebar.markdown(linkedin_link, unsafe_allow_html=True)
     st.sidebar.text("Checkout my work")
-    github_link = f'<a href="{info.my_github_url}"><img src="{info.github_image_url}" alt="Github" width="65" height="65"></a>'
+    github_link = f'<a href="{infoC.my_github_url}"><img src="{infoC.github_image_url}" alt="Github" width="65" height="65"></a>'
     st.sidebar.markdown(github_link, unsafe_allow_html=True)
     st.sidebar.text("Or email me!")
-    email_html = f'<a href="mailto:{info.my_email_address}"><img src="{info.email_image_url}" alt="Email" width="75" height="75"></a>'
+    email_html = f'<a href="mailto:{infoC.my_email_address}"><img src="{infoC.email_image_url}" alt="Email" width="75" height="75"></a>'
     st.sidebar.markdown(email_html, unsafe_allow_html=True)
 linksSection()
 
@@ -41,7 +41,7 @@ def educationSection(education_data, course_data):
         hide_index=True,
     )
     st.write("---")
-educationSection(info.education_data, info.course_data)
+educationSection(infoC.education_data, infoC.course_data)
 
 # Professional Experience
 def experienceSection(experience_data):
@@ -52,7 +52,7 @@ def experienceSection(experience_data):
         for bullet in job_description:
             expander.write(bullet)
     st.write("---")
-experienceSection(info.experience_data)
+experienceSection(infoC.experience_data)
 
 # Projects
 def projectSection(projects_data):
@@ -62,20 +62,20 @@ def projectSection(projects_data):
         expander.image(image, width=250)
         expander.write(project_description)
     st.write("---")
-projectSection(info.projects_data)
+projectSection(infoC.projects_data)
 
 # Skills
 def skillsSection(programming_data, spoken_data):
     st.header("Skills 🧑‍💻")
     st.subheader("Programming Languages")
     for skill, percentage in programming_data.items():
-        st.write(f"{skill} {info.programming_icons.get(skill, '')}")
+        st.write(f"{skill} {infoC.programming_icons.get(skill, '')}")
         st.progress(percentage)
     st.subheader("Spoken Languages")
     for spoken, proficiency in spoken_data.items():
-        st.write(f"{spoken} {info.spoken_icons.get(spoken, '')}: {proficiency}")
+        st.write(f"{spoken} {infoC.spoken_icons.get(spoken, '')}: {proficiency}")
     st.write("---")
-skillsSection(info.programming_data, info.spoken_data)
+skillsSection(infoC.programming_data, infoC.spoken_data)
 
 # Activities
 def activitiesSection(leadership_data, activity_data):
@@ -96,4 +96,4 @@ def activitiesSection(leadership_data, activity_data):
             for bullet in details:
                 expander.write(bullet)
     st.write("---")
-activitiesSection(info.leadership_data, info.activity_data)
+activitiesSection(infoC.leadership_data, infoC.activity_data)
