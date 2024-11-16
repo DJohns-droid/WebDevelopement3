@@ -6,22 +6,21 @@ from datetime import datetime, timedelta
 
 st.set_page_config(page_title="Mars Weather Dashboard", layout="wide")
 
-NASA_API_KEY = st.secrets["NASA"]
+nasaApiKey = st.secrets["NASA"]
 
-BASE_URL = "https://api.nasa.gov/mars-photos/api/v1/rovers/perseverance/photos"
+baseUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers/perseverance/photos"
 
 @st.cache_data(ttl=3600)
-def fetch_mars_photos(date_str, camera=None):
-    """Fetch Mars photos from Perseverance rover for a specific date"""
+def fetchMarsPhotos(dateStr, camera=None):
     params = {
-        'api_key': NASA_API_KEY,
-        'earth_date': date_str,
+        'api_key': nasaApiKey,
+        'earth_date': dateStr,
     }
     if camera and camera != "All Cameras":
         params['camera'] = camera
-    
+
     try:
-        response = requests.get(BASE_URL, params=params)
+        response = requests.get(baseUrl, params=params)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -36,16 +35,16 @@ Select a date and camera type to view photos and statistics.
 
 with st.sidebar:
     st.header("Dashboard Controls")
-    
-    default_date = datetime.now() - timedelta(days=7)
-    selected_date = st.date_input(
+
+    defaultDate = datetime.now() - timedelta(days=7)
+    selectedDate = st.date_input(
         "Select Date",
-        value=default_date,
+        value=defaultDate,
         max_value=datetime.now(),
         help="Choose a date to view Mars photos"
     )
-    
-    camera_options = [
+
+    cameraOptions = [
         "All Cameras",
         "NAVCAM_LEFT",
         "NAVCAM_RIGHT",
@@ -54,13 +53,13 @@ with st.sidebar:
         "REAR_HAZCAM_LEFT",
         "REAR_HAZCAM_RIGHT"
     ]
-    selected_camera = st.selectbox(
+    selectedCamera = st.selectbox(
         "Select Camera",
-        camera_options,
+        cameraOptions,
         help="Choose which camera's photos to display"
     )
-    
-    max_images = st.slider(
+
+    maxImages = st.slider(
         "Maximum Images",
         min_value=1,
         max_value=10,
@@ -68,56 +67,61 @@ with st.sidebar:
         help="Adjust how many images to display"
     )
 
-date_str = selected_date.strftime('%Y-%m-%d')
-photos_data = fetch_mars_photos(date_str, selected_camera)
+dateStr = selectedDate.strftime('%Y-%m-%d')
+photosData = fetchMarsPhotos(dateStr, selectedCamera)
 
-if photos_data and 'photos' in photos_data and photos_data['photos']:
-    photos = photos_data['photos'][:max_images]
-    
+if photosData and 'photos' in photosData and photosData['photos']:
+    photos = photosData['photos'][:maxImages]
+
     cols = st.columns(2)
     for idx, photo in enumerate(photos):
-        with cols[idx % 2]:
+        colIndex = idx % 2
+        with cols[colIndex]:
+            imageUrl = photo['img_src']
+            cameraName = photo['camera']['name']
+            sol = photo['sol']
+            caption = f"Camera: {cameraName} - Sol: {sol}"
             st.image(
-                photo['img_src'],
-                caption=f"Camera: {photo['camera']['name']} - Sol: {photo['sol']}",
+                imageUrl,
+                caption=caption,
                 use_column_width=True
             )
-            st.markdown(f"**Earth Date:** {photo['earth_date']}")
-            
+            earthDate = photo['earth_date']
+            st.markdown(f"**Earth Date:** {earthDate}")
+
     st.subheader("📊 Image Statistics")
-    
-    total_photos = len(photos_data['photos'])
-    unique_cameras = set(photo['camera']['name'] for photo in photos_data['photos'])
-    cameras_used = len(unique_cameras)
-    
+
+    totalPhotos = len(photosData['photos'])
+    cameraNames = [photo['camera']['name'] for photo in photosData['photos']]
+    uniqueCameras = set(cameraNames)
+    camerasUsed = len(uniqueCameras)
+
     col1, col2 = st.columns(2)
     with col1:
-        st.metric("Total Photos Available", total_photos)
+        st.metric("Total Photos Available", totalPhotos)
     with col2:
-        st.metric("Different Cameras Used", cameras_used)
-        
-    camera_df = pd.DataFrame([
-        {'camera': photo['camera']['name']} 
-        for photo in photos_data['photos']
-    ])
-    
-    camera_counts = camera_df['camera'].value_counts().reset_index()
-    camera_counts.columns = ['Camera', 'Count']
-    
+        st.metric("Different Cameras Used", camerasUsed)
+
+    cameraList = [{'camera': name} for name in cameraNames]
+    cameraDf = pd.DataFrame(cameraList)
+
+    cameraCounts = cameraDf['camera'].value_counts().reset_index()
+    cameraCounts.columns = ['Camera', 'Count']
+
     fig = px.bar(
-        camera_counts,
+        cameraCounts,
         x='Camera',
         y='Count',
         title='Distribution of Photos by Camera',
         color='Camera'
     )
-    
+
     fig.update_layout(
         xaxis_title="Camera Type",
         yaxis_title="Number of Photos",
         showlegend=False
     )
-    
-    st.plotly_chart(fig, use_container_width=True)
+
+    st.plotly_chart(fig)
 else:
-    st.warning(f"No photos available for {date_str}. Try another date!")
+    st.error("No photos found for the selected date and camera.")
