@@ -13,7 +13,9 @@ st.subheader("Team Members: Charlie Rivers, Daniel Johns")
 profile_picture = "Images/homepage.png"
 image = Image.open(profile_picture)
 rotated_image = image.rotate(50, expand=True)
-st.image(rotated_image, caption="Space Theme Image", width=100, use_column_width=False)
+width, height = rotated_image.size
+resized_image = rotated_image.resize((width // 3, height // 3))
+st.image(resized_image, caption="Space Theme Image", use_column_width=False)
 
 # Introduction
 st.write("""
