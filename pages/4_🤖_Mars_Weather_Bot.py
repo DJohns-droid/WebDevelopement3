@@ -36,7 +36,8 @@ def main():
     st.title("Mars Weather Assistant Page")
 
     # User Inputs
-    date = st.text_input("Enter a Sol date for Mars weather analysis (e.g., 1000):")
+    st.write("Mars uses a different time system based on sols, which are roughly 24 hours and 39 minutes long. Let's help you find the weather data!")
+    date = st.text_input("Enter a Sol date (Martian day since mission start, e.g., 1000 for the 1000th Martian day):")
     activity_type = st.selectbox(
         "Select an activity type:",
         ["Rover Operations", "Outdoor Exploration", "Mission Planning"]
@@ -46,7 +47,7 @@ def main():
 
     # Fetch Mars weather data
     if st.button("Get Mars Weather Data"):
-        if date:
+        if date.isdigit():
             weather_data = fetch_mars_weather(date)
             if weather_data:
                 st.write("Mars Weather Data:", weather_data)
@@ -57,8 +58,10 @@ def main():
                 )
                 report = generate_text(prompt)
                 st.write("Generated Weather Report:", report)
+            else:
+                st.error("No data found for the given Sol date. Please try another date.")
         else:
-            st.error("Please enter a valid Sol date.")
+            st.error("Please enter a valid numeric Sol date.")
 
     # Chatbot interaction
     st.write("### Chat with the Mars Weather Assistant")
