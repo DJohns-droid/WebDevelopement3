@@ -5,7 +5,7 @@ import os
 from datetime import date
 
 NASA_API_KEY = st.secrets["NASA"]
-os.environ['GOOGLE_API_KEY'] = st.secrets["GEMINI"]
+GOOGLE_API_KEY = st.secrets["GEMINI"]
 
 genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
 model = genai.GenerativeModel("gemini-1.5-flash")
