@@ -88,7 +88,7 @@ leadership_data = {
             "- Supported junior members of the cycling team with skill-building exercises",
             "- Promoted a culture of teamwork and perseverance within the team",
         ],
-        ##"Images/mentor.jpg",
+        "Images/mentor.png",
     ),
 
 }
