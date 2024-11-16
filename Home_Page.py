@@ -1,4 +1,5 @@
 import streamlit as st
+from PIL import Image
 
 # Title of App
 st.title("Web Development Lab03")
@@ -9,8 +10,10 @@ st.subheader("Team 52, Web Development - Section C")
 st.subheader("Team Members: Charlie Rivers, Daniel Johns")
 
 # Image Display
-profile_picture = "Images/homepage.png"
-st.image(profile_picture, caption="Space Theme Image", width=300)
+profile_picture = "Images/homepage.jpg"
+image = Image.open(profile_picture)
+rotated_image = image.rotate(50, expand=True)
+st.image(rotated_image, caption="Space Theme Image", width=300, use_column_width=False)
 
 # Introduction
 st.write("""
