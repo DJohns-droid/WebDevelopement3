@@ -7,8 +7,8 @@ import os
 from datetime import datetime, date
 
 # Set your API keys securely
-NASA_API_KEY = 'h54FtvyFY4TGpzp7tBFCD2pmmAiC1rN74joa3hgE'  # Replace with your actual NASA API key
-os.environ['GOOGLE_API_KEY'] = 'AIzaSyD_BgTRB-GDl_QK6-Mfb0n3JWV-R5zIlk4'  # Replace with your actual Google Gemini API key
+NASA_API_KEY = st.secrets["NASA"]
+os.environ['GOOGLE_API_KEY'] = st.secrets["GEMINI"]
 
 # Configure Google Gemini API
 genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
