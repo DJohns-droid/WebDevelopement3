@@ -1,7 +1,7 @@
 # This File contains the information to be displayed in your portfolio
 
 # Profile Information
-profile_picture = "Images/profile.jpeg"
+profile_picture = "Images/profileC.jpeg"
 about_me = (
     "I'm Charlie Rivers, a dedicated and driven individual from Atlanta, GA. "
     "I am passionate about community involvement, leadership, and achieving "
@@ -49,28 +49,28 @@ experience_data = {
         "- Led a team of approximately 10 volunteers",
         "- Completed construction projects benefiting underserved families and organizations",
         "- Managed project logistics, including material procurement and worksite operations"
-    ], "Images/tour_guide.jpeg"),
+    ], "Images/tour_guideC.jpeg"),
     "Head Counselor, Camp Evergreen": ([
         "- Promoted to Head Counselor role typically held by college staff",
         "- Managed a team of junior counselors to ensure smooth operations",
         "- Organized activities fostering a fun and educational environment"
-    ], "Images/camp.jpeg"),
+    ], "Images/campC.jpeg"),
     "Customer Service Representative, Chick-fil-A": ([
         "- Employee of the Month, February 2023",
         "- Provided exceptional service while handling orders and assisting customers",
         "- Maintained cleanliness of equipment and dining areas"
-    ], "Images/chickfila.jpeg"),
+    ], "Images/chickfilaC.jpeg"),
     "Founder, Charlie's Chores": ([
         "- Maintained over 20 clients, including 10 recurring weekly",
         "- Expanded service offerings to include pet care, yard maintenance, and recycling services"
-    ], "Images/chores.jpeg"),
+    ], "Images/choresC.jpeg"),
 }
 
 # Projects Data
 projects_data = {
     "Event Coordination": (
         "Organized and led multiple community outreach programs and events, such as Groceries on Wheels and student piano recitals.",
-        "Images/event_coordination.jpeg"
+        "Images/event_coordinationC.jpeg"
     )
 }
 
@@ -104,7 +104,7 @@ leadership_data = {
     "Co-Captain, Georgia Student Ice Hockey League": ([
         "- Led team to 2022 State Runner-Up position",
         "- Organized training schedules and team strategies"
-    ], "Images/hockey.jpeg"),
+    ], "Images/hockeyC.jpeg"),
 }
 
 activity_data = {
@@ -113,13 +113,13 @@ activity_data = {
             "- Taught beginner students piano techniques",
             "- Performed in various community recitals"
         ],
-        "Images/piano.jpeg"
+        "Images/pianoC.jpeg"
     ),
     "Community Involvement": (
         [
             "- Organized charity events and fundraising activities",
             "- Actively participated in Groceries on Wheels initiatives"
         ],
-        "Images/community_involvement.jpeg"
+        "Images/community_involvementC.jpeg"
     )
 }
