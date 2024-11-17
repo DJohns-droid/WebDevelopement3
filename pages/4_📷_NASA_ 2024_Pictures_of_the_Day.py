@@ -2,7 +2,8 @@ import streamlit as st
 import requests
 import google.generativeai as genai
 import os
-from datetime import date
+import random
+from datetime import date, timedelta
 
 NASA_API_KEY = st.secrets["NASA"]
 GOOGLE_API_KEY = st.secrets["GEMINI"]
@@ -14,12 +15,27 @@ st.title("NASA Astronomy Picture of the Day for 2024! 📷")
 st.write("Select a date in 2024 to view the Astronomy Picture of the Day and ask questions about it.")
 
 max_date = min(date(2024, 12, 31), date.today())
+min_date = date(2024, 1, 1)
+
+if 'selectedDate' not in st.session_state:
+    st.session_state['selectedDate'] = max_date
+
 selectedDate = st.date_input(
     "Select a date",
-    min_value=date(2024, 1, 1),
+    min_value=min_date,
     max_value=max_date,
-    value=max_date
+    value=st.session_state['selectedDate']
 )
+
+if st.button("Surprise Me With a Random Day!"):
+    random_days = random.randint(0, (max_date - min_date).days)
+    random_date = min_date + timedelta(days=random_days)
+    st.session_state['selectedDate'] = random_date
+    st.experimental_rerun()
+else:
+    st.session_state['selectedDate'] = selectedDate
+
+selectedDate = st.session_state['selectedDate']
 
 if selectedDate > date.today():
     st.warning("Please select a day where the picture has already been taken!")
@@ -56,6 +72,7 @@ else:
         mediaUrl = apodData.get('url')
 
         st.header(title)
+        st.write(f"**Date:** {selectedDate.strftime('%B %d, %Y')}")
         st.write(explanation)
 
         if mediaType == 'image':
