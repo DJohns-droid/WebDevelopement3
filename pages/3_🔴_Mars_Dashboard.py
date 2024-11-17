@@ -4,11 +4,11 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime, timedelta
 
-nasaApiKey = st.secrets["NASA"]
+nasaApiKey = st.secrets["NASA"]  # NEW
 
 apiBaseUrl = "https://api.nasa.gov/mars-photos/api/v1/rovers/perseverance/photos"
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600)  # NEW
 def fetchMarsPhotos(selectedDate, selectedCamera=None):
     apiParameters = {
         'api_key': nasaApiKey,
@@ -22,7 +22,7 @@ def fetchMarsPhotos(selectedDate, selectedCamera=None):
         apiResponse.raise_for_status()
         return apiResponse.json()
     except requests.exceptions.RequestException as error:
-        st.error(f"Error fetching data: {error}")
+        st.error(f"Error fetching data: {error}")  # Existing
         return None
 
 st.title("Mars Imagery Dashboard 🔴")
@@ -35,7 +35,7 @@ Select a date and camera type to view photos and statistics.
 st.sidebar.header("Dashboard Controls")
 
 defaultDate = datetime.now() - timedelta(days=7)
-selectedDate = st.sidebar.date_input(
+selectedDate = st.sidebar.date_input(  # NEW
     "Select Date",
     value=defaultDate,
     max_value=datetime.now(),
@@ -71,7 +71,7 @@ marsPhotosData = fetchMarsPhotos(formattedDate, selectedCamera)
 if marsPhotosData and 'photos' in marsPhotosData and marsPhotosData['photos']:
     marsPhotos = marsPhotosData['photos'][:maximumImages]
 
-    imageColumns = st.columns(2)
+    imageColumns = st.columns(2)  # NEW
     for photoIndex, marsPhoto in enumerate(marsPhotos):
         columnIndex = photoIndex % 2
         column = imageColumns[columnIndex]
@@ -94,9 +94,9 @@ if marsPhotosData and 'photos' in marsPhotosData and marsPhotosData['photos']:
     uniqueCameraNames = set(cameraNameList)
     uniqueCamerasCount = len(uniqueCameraNames)
 
-    metricsColumns = st.columns(2)
-    metricsColumns[0].metric("Total Photos Available", totalPhotosAvailable)
-    metricsColumns[1].metric("Different Cameras Used", uniqueCamerasCount)
+    metricsColumns = st.columns(2)  # NEW
+    metricsColumns[0].metric("Total Photos Available", totalPhotosAvailable)  # NEW
+    metricsColumns[1].metric("Different Cameras Used", uniqueCamerasCount)  # NEW
 
     cameraData = [{'camera': cameraName} for cameraName in cameraNameList]
     cameraDataFrame = pd.DataFrame(cameraData)
@@ -118,6 +118,6 @@ if marsPhotosData and 'photos' in marsPhotosData and marsPhotosData['photos']:
         showlegend=False
     )
 
-    st.plotly_chart(barChartFigure)
+    st.plotly_chart(barChartFigure)  # NEW
 else:
     st.error("No photos found for the selected date and camera.")
