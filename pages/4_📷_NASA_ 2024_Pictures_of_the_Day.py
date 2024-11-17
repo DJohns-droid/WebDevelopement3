@@ -20,20 +20,18 @@ min_date = date(2024, 1, 1)
 if 'selectedDate' not in st.session_state:
     st.session_state['selectedDate'] = max_date
 
-selectedDate = st.date_input(
-    "Select a date",
-    min_value=min_date,
-    max_value=max_date,
-    value=st.session_state['selectedDate']
-)
-
 if st.button("Surprise Me With a Random Day!"):
     random_days = random.randint(0, (max_date - min_date).days)
     random_date = min_date + timedelta(days=random_days)
     st.session_state['selectedDate'] = random_date
-    st.experimental_rerun()
-else:
-    st.session_state['selectedDate'] = selectedDate
+
+selectedDate = st.date_input(
+    "Select a date",
+    min_value=min_date,
+    max_value=max_date,
+    value=st.session_state['selectedDate'],
+    key='selectedDate'
+)
 
 selectedDate = st.session_state['selectedDate']
 
@@ -82,7 +80,7 @@ else:
         else:
             st.write("Media type not supported.")
 
-        if 'summary' not in st.session_state:
+        if 'summary' not in st.session_state or st.session_state.get('new_apod', False):
             def generateApodSummary(apodData):
                 title = apodData.get('title')
                 description = apodData.get('explanation')
@@ -105,6 +103,7 @@ else:
             if summary:
                 st.session_state['summary'] = summary
                 st.write(summary)
+            st.session_state['new_apod'] = False
         else:
             st.subheader("Generated Summary")
             st.write(st.session_state['summary'])
