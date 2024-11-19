@@ -21,7 +21,7 @@ Welcome to our Streamlit Web Development Lab03 app! You can navigate between the
 
 1. **Charlie's Portfolio**: Get to know Charlie's background in Industrial Engineering, his leadership roles, and his love for tackling practical challenges.
 
-2. **Daniel's Portfolio**: Check out Daniel's projects in software development, showcasing his creativity and team-oriented approach.
+2. **Daniel's Portfolio**: Check out Daniel's projects in valve automation, showcasing his creativity and team-oriented approach.
 
 3. **Mars Dashboard**: See the latest photos from NASA's Perseverance rover on Mars! Pick a date and camera type to dive into the images and stats.
 
