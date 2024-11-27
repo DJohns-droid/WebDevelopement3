@@ -8,7 +8,7 @@ from datetime import date, timedelta
 NASA_API_KEY = st.secrets["NASA"]
 GOOGLE_API_KEY = st.secrets["GEMINI"]
 
-genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
+genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 st.title("NASA Astronomy Picture of the Day for 2024! 📷")
