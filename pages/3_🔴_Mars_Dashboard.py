@@ -82,7 +82,7 @@ if marsPhotosData and 'photos' in marsPhotosData and marsPhotosData['photos']:
         column.image(
             imageUrl,
             caption=photoCaption,
-            use_column_width=True
+            use_container_width=True
         )
         earthDate = marsPhoto['earth_date']
         column.markdown(f"**Earth Date:** {earthDate}")
