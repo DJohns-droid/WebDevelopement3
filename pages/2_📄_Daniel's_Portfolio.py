@@ -4,7 +4,7 @@ import pandas as pd
 
 ##abt me
 def about_me_section():
-    st.header("About Me 🧑‍💻")
+    st.header("About Me (Outdated Portfolio, please ignore)")
     st.image(info.profile_picture, width = 200)
     st.write(info.about_me)
     st.write("---")
